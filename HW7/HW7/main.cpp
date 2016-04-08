@@ -1,13 +1,12 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <vector>
 
 using namespace std;
 
 void quickSort(int *arr, int left, int right);
 void mergeSort(int *arr, int low, int high);
-void merge(int *arr, int low, int mid,int high);
+void merge(int *arr, int low, int mid, int high);
 int sizeOfArray(fstream &file);
 void loadArray(int *arr, int numberOfItems, fstream &file);
 void maxHeap(int *arr, int i, int n);
@@ -23,31 +22,40 @@ int main() {
 
 	fin.open("Assign7Data.txt");
 
-	while (fin>>tempInt) {;
+	while (fin >> tempInt) {
 		//cout << tempInt << endl;
 		numberOfItems++;
 	}
-	//Reset seek to 0
-	fin.clear();
-	fin.seekg(0,ios::beg);
 
-	cout << numberOfItems;
-	A = new int[numberOfItems];
-
-	int here = 0;
-	while (here < numberOfItems) {
-		fin >> tempInt;
-		A[here] = tempInt;
-		here++;
+	int count = 0;
+	while (count < 3) {
+		//Reset seek to 0
+		fin.clear();
+		fin.seekg(0, ios::beg);
+		int here = 0;
+		A = new int[numberOfItems];
+		while (here < numberOfItems) {
+			fin >> tempInt;
+			A[here] = tempInt;
+			here++;
+		}
+		switch (count)
+		{
+		case 0:	quickSort(A, 0, numberOfItems - 1);
+				display(A, numberOfItems);
+			break;
+		case 1:	mergeSort(A, 0, numberOfItems -1);
+			display(A, numberOfItems);
+			break;
+		case 2:	buildMaxHeap(A, numberOfItems-39);
+			heapsort(A, numberOfItems-40);
+			display(A, numberOfItems);
+			break;
+		default:
+			break;
+		}
+		count++;
 	}
-
-	display(A, numberOfItems);
-	mergeSort(A,0,numberOfItems-1);
-	display(A, numberOfItems);
-
-	//quickSort(A, 0, numberOfItems-1);
-
-	//display(A, numberOfItems);
 
 	// Read in the dictionary
 	fstream finDictionary;
@@ -73,12 +81,10 @@ int main() {
 
 	// Heap Sort
 	A = new int[lengthOfDictionary];
-	loadArray(A, lengthOfDictionary, finDictionary);	
+	loadArray(A, lengthOfDictionary, finDictionary);
 	buildMaxHeap(A, lengthOfDictionary);
 	heapsort(A, lengthOfDictionary);
 	display(A, lengthOfDictionary);
-
-	
 
 	fin.close();
 	finDictionary.close();
@@ -100,7 +106,7 @@ void display(int arr[], int size) {
 	}
 }
 void quickSort(int *arr, int left, int right) {
-	int i = left, j = right, pivot = arr[(left + right)/2];
+	int i = left, j = right, pivot = arr[(left + right) / 2];
 
 	while (i <= j) {
 		while (arr[i] < pivot) {
@@ -162,10 +168,10 @@ void mergeSort(int *arr, int low, int high) {
 		merge(arr, low, mid, high);
 	}
 }
-void merge(int *arr,int low,int mid,int high) {
+void merge(int *arr, int low, int mid, int high) {
 	int * b = new int[high + 1 - low];
-	int h = low, i =0, j = mid+1, k;
-	while ((h <= mid) && (j <= high)){
+	int h = low, i = 0, j = mid + 1, k;
+	while ((h <= mid) && (j <= high)) {
 		if (arr[h] <= arr[j]) {
 			b[i] = arr[h];
 			h++;
@@ -176,19 +182,19 @@ void merge(int *arr,int low,int mid,int high) {
 		}
 		i++;
 	}
-	if (h>mid){
-		for (k = j; k <= high; k++){
+	if (h>mid) {
+		for (k = j; k <= high; k++) {
 			b[i] = arr[k];
 			i++;
 		}
 	}
 	else {
-		for (k = h; k <= mid; k++){
+		for (k = h; k <= mid; k++) {
 			b[i] = arr[k];
 			i++;
 		}
 	}
-	for (k = 0; k <= high - low; k++){
+	for (k = 0; k <= high - low; k++) {
 		arr[k + low] = b[k];
 	}
 	delete[] b;
@@ -218,7 +224,6 @@ void buildMaxHeap(int *arr, int n) {
 	}
 }
 void heapsort(int *arr, int n) {
-	int temp;
 	for (int i = n; i >= 2; i--) {
 		swapT(arr[i], arr[1]);
 		maxHeap(arr, 1, i - 1);
